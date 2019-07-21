@@ -15,7 +15,7 @@ namespace CsWinFormsCoreW10Api
     public partial class Form1 : Form
     {
         private Geolocator _locator;
-        private Accelerometer _acceleromator;
+        private Accelerometer _accelerometor;
         private StatusStrip _statusStrip;
         private ToolStripStatusLabel _statusLabel;
 
@@ -36,6 +36,22 @@ namespace CsWinFormsCoreW10Api
             _locator.ReportInterval = 250;
             _locator.StatusChanged += Locator_StatusChanged;
             _locator.PositionChanged += Locator_PositionChanged;
+
+            _accelerometor = Accelerometer.GetDefault(AccelerometerReadingType.Standard);
+            _accelerometor.ReadingChanged += Accelerometor_ReadingChanged;
+        }
+
+        private void Accelerometor_ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((Action)(() => Accelerometor_ReadingChanged(sender, args)));
+                return;
+            }
+
+            lblXAccel.Text = $"{args.Reading.AccelerationX:0.00}";
+            lblYAccel.Text = $"{args.Reading.AccelerationY:0.00}";
+            lblZAccel.Text = $"{args.Reading.AccelerationZ:0.00}";
         }
 
         private void Locator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
@@ -47,14 +63,14 @@ namespace CsWinFormsCoreW10Api
         {
             if (this.InvokeRequired)
             {
-                this.Invoke((MethodInvoker)delegate { Locator_PositionChanged(sender, args); });
+                this.Invoke((Action)(() => Locator_PositionChanged(sender, args)));
                 return;
             }
 
             var position = args.Position.Coordinate.Point.Position;
             lblLatitude.Text = $"{position.Latitude:0.0000}";
             lblLongitude.Text = $"{position.Longitude:0.0000}";
-            lblSpeed.Text = $"{args.Position.Coordinate.Speed:0.0000}";
+            lblSpeed.Text = $"{args.Position.Coordinate.Speed:0.00}";
         }
 
         private void TestButton_Click(object sender, EventArgs e)
@@ -67,7 +83,7 @@ namespace CsWinFormsCoreW10Api
         {
             base.OnClosing(e);
             _locator = null;
-            _acceleromator = null;
+            _accelerometor = null;
         }
     }
 }
