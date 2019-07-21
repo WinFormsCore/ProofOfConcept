@@ -15,15 +15,6 @@ namespace CsWinFormsCoreW10Api
         public Form1()
         {
             InitializeComponent();
-            var testButton = new Button()
-            {
-                Text = "Get Geolocation",
-                Location = new Point(100, 100),
-                Size = new Size(100, 50)
-            };
-
-            testButton.Click += TestButton_Click;
-            Controls.Add(testButton);
         }
 
         private async void TestButton_Click(object sender, EventArgs e)
